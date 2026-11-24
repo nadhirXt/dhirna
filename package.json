@@ -1,0 +1,26 @@
+{
+  "name": "dhirna",
+  "version": "1.0.0",
+  "description": "Dhirna — Open-source desktop focus engine & content shield for Windows and Linux (Tauri 2 + Browser Extension).",
+  "type": "module",
+  "scripts": {
+    "sync-core": "node scripts/sync-core.mjs",
+    "check-core": "node scripts/sync-core.mjs --check",
+    "test": "node scripts/sync-core.mjs && node --test tests/*.test.js",
+    "package": "node scripts/sync-core.mjs && bash scripts/build-zip.sh"
+  },
+  "keywords": [
+    "dhirna",
+    "adhd",
+    "focus",
+    "shield",
+    "productivity",
+    "tauri",
+    "linux",
+    "windows",
+    "browser-extension",
+    "deep-work"
+  ],
+  "author": "Nadhir",
+  "license": "MIT"
+}

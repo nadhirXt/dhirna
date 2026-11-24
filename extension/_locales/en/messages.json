@@ -1,0 +1,18 @@
+{
+  "appName": {
+    "message": "Dhirna — Focus Engine & Content Shield",
+    "description": "Extension full name"
+  },
+  "appShortName": {
+    "message": "Dhirna",
+    "description": "Extension short name"
+  },
+  "appDescription": {
+    "message": "Plan your work sites, close distractions in 3 seconds, and filter adult content locally.",
+    "description": "Extension description"
+  },
+  "actionTitle": {
+    "message": "Dhirna — Focus & Shield",
+    "description": "Toolbar button tooltip"
+  }
+}

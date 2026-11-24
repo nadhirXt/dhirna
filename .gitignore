@@ -1,0 +1,36 @@
+# Dependencies & build artifacts
+node_modules/
+dist/
+release-artifacts/
+final-release/
+downloaded/
+*.zip
+*.tar.gz
+*.deb
+*.AppImage
+*.msi
+*.exe
+desktop/src-tauri/target/
+desktop/src-tauri/gen/
+
+# Local secrets & runtime state
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.mobileconfig
+dhirna_state.json
+dhirna_watchdog.json
+dhirna_analytics.db*
+
+# Editor & OS metadata
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+.vscode/
+.idea/
+__pycache__/
+*.pyc
+graphify-out/

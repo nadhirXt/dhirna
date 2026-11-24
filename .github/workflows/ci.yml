@@ -1,0 +1,114 @@
+name: CI (Tests, Security & Multi-OS Build Check)
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  secret-scan:
+    name: Secret Scan (Gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Gitleaks secret scan
+        uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_ENABLE_SUMMARY: "false"
+
+  test-core-and-extension:
+    name: Core JS Tests, Extension Package & SBOM
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "20"
+
+      - name: Verify core sync and run JS unit tests
+        run: |
+          npm test
+          npm run check-core
+
+      - name: Regression check for removed legacy UI strings
+        run: |
+          if grep -rniE "bouclier wi-?fi|wi-?fi shield|partage 4g|4g/5g|synchronisation.*usb|usb.*sync|options? avanc|advanced options?" \
+            --exclude-dir=.git --exclude-dir=.github --exclude-dir=target --exclude-dir=node_modules --exclude-dir=dist .; then
+            echo "ERROR: Forbidden legacy UI text detected."
+            exit 1
+          fi
+
+      - name: Package browser extension zip & checksum
+        run: |
+          npm run package
+          (cd dist && sha256sum dhirna-extension-v*.zip > SHA256SUMS-extension.txt)
+
+      - name: Generate CycloneDX SBOM
+        uses: anchore/sbom-action@e22c389904149dbc22b58101806040fa8d37a610 # v0
+        with:
+          path: .
+          format: cyclonedx-json
+          output-file: dist/dhirna-sbom.cdx.json
+          upload-artifact: false
+
+      - name: Upload extension zip, checksum and SBOM
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: dhirna-extension-and-sbom
+          path: |
+            dist/dhirna-extension-v*.zip
+            dist/SHA256SUMS-extension.txt
+            dist/dhirna-sbom.cdx.json
+
+  test-desktop-rust:
+    name: Desktop Rust Tests & Smoke Check (${{ matrix.os_name }})
+    needs: [secret-scan, test-core-and-extension]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ubuntu-latest
+            os_name: linux
+          - platform: windows-latest
+            os_name: windows
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Install Linux system dependencies
+        if: matrix.os_name == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev patchelf
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@39008827e6b4319a349e9a42dfc90579dd25f1ca # stable
+
+      - name: Run Rust unit tests & build check
+        working-directory: desktop/src-tauri
+        run: cargo test --locked || cargo test
+
+      - name: Smoke-test Linux kill script
+        if: matrix.os_name == 'linux'
+        run: |
+          bash -n scripts/kill.sh
+          bash scripts/kill.sh --dry-run
+
+      - name: Smoke-test Windows kill script
+        if: matrix.os_name == 'windows'
+        shell: pwsh
+        run: .\scripts\kill.ps1 -DryRun

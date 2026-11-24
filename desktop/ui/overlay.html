@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dhirna</title>
+  <link rel="stylesheet" href="lib/tokens.css" />
+  <link rel="stylesheet" href="app.css" />
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background-color: var(--bg-page);
+    }
+    .overlay-panel {
+      width: 100%;
+      max-width: 580px;
+      background-color: var(--surface-card);
+      border: 1px solid var(--hairline-strong);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: var(--shadow-float);
+      position: relative;
+      overflow: hidden;
+    }
+    .overlay-panel::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: var(--accent);
+    }
+    body[data-alarm="active"] .overlay-panel::before {
+      background-color: var(--danger);
+    }
+    .overlay-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--hairline);
+    }
+    .overlay-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+    body[data-alarm="active"] .overlay-badge {
+      color: var(--danger);
+    }
+    .overlay-grid {
+      display: grid;
+      grid-template-columns: 1fr 84px 1.2fr;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background-color: var(--surface-inset);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-lg);
+    }
+    .ov-node {
+      background-color: var(--surface-card);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      min-width: 0;
+    }
+    .ov-node-target {
+      border-color: var(--accent-border);
+    }
+    .ov-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .ov-val {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ov-center {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ov-ring-svg {
+      width: 72px;
+      height: 72px;
+      transform: rotate(-90deg);
+    }
+    .ov-ring-track {
+      stroke: var(--hairline-strong);
+    }
+    .ov-ring-arc {
+      stroke: var(--accent);
+      stroke-dasharray: 188.5;
+      stroke-dashoffset: 0;
+    }
+    body[data-alarm="active"] .ov-ring-arc {
+      stroke: var(--danger);
+    }
+    .ov-center-num {
+      position: absolute;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-primary);
+      font-variant-numeric: tabular-nums;
+    }
+    .ov-goal-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      background-color: var(--accent-soft);
+      border: 1px solid var(--accent-border);
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    .ov-goal-title {
+      font-weight: 500;
+      color: var(--accent);
+    }
+    .subtitle code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      padding: 2px 6px;
+      border-radius: var(--radius-xs);
+      background-color: var(--surface-inset);
+      border: 1px solid var(--hairline);
+      color: var(--text-primary);
+    }
+    .ov-btn-now {
+      width: 100%;
+      height: 42px;
+      padding: 0 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      background-color: var(--accent);
+      color: var(--text-on-accent);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: background-color var(--t-fast) var(--ease);
+    }
+    .ov-btn-now:hover {
+      background-color: var(--accent-strong);
+    }
+    .ov-keycap {
+      padding: 2px 7px;
+      border-radius: var(--radius-xs);
+      background-color: rgba(14, 19, 27, 0.22);
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <main class="overlay-panel" role="dialog" aria-modal="true" aria-labelledby="ov-heading">
+    <header class="overlay-top">
+      <div class="sidebar-brand">
+        <svg class="icon-mark" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M8 4.5V8L10.5 9.5" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="brand-wordmark">Dhirna</span>
+      </div>
+      <div class="overlay-badge">
+        <span data-i18n="blk_header_meta">Interception Dhirna</span>
+        <span>·</span>
+        <span><span id="ov-sec">3</span>s</span>
+      </div>
+    </header>
+
+    <div>
+      <div id="ov-goal-pill" class="ov-goal-pill hidden">
+        <span data-i18n="blk_goal_prefix">Objectif actif :</span>
+        <span class="ov-goal-title" id="ov-goal-title"></span>
+      </div>
+      <h1 id="ov-heading" data-i18n="blk_title">Retour au travail</h1>
+      <p class="subtitle">
+        <span data-i18n="blk_subtitle_prefix">Accès réflexe à</span>
+        <code id="ov-distraction">instagram.com</code>
+        <span data-i18n="blk_subtitle_suffix">intercepté avant chargement</span>
+      </p>
+    </div>
+
+    <section class="overlay-grid">
+      <div class="ov-node">
+        <div class="ov-meta">
+          <span class="dot dot-block"></span>
+          <span data-i18n="blk_node_intercepted">Fenêtre interceptée</span>
+        </div>
+        <div class="ov-val" id="ov-node-blocked">instagram.com</div>
+      </div>
+
+      <div class="ov-center">
+        <svg class="ov-ring-svg" viewBox="0 0 72 72" fill="none" aria-hidden="true">
+          <circle class="ov-ring-track" cx="36" cy="36" r="30" stroke-width="3"/>
+          <circle id="ov-ring-arc" class="ov-ring-arc" cx="36" cy="36" r="30" stroke-width="3.4" stroke-linecap="round"/>
+        </svg>
+        <div class="ov-center-num"><span id="ov-ring-num">3</span>s</div>
+      </div>
+
+      <div class="ov-node ov-node-target">
+        <div class="ov-meta">
+          <span class="dot dot-work"></span>
+          <span data-i18n="blk_node_target">Cible de retour</span>
+        </div>
+        <div class="ov-val" id="ov-node-work">—</div>
+      </div>
+    </section>
+
+    <div class="sim-track">
+      <div id="ov-bar" class="sim-bar"></div>
+    </div>
+
+    <button id="btn-ov-now" class="ov-btn-now" type="button">
+      <span id="ov-btn-label" data-i18n="blk_btn_return">Revenir à mon travail maintenant</span>
+      <kbd class="ov-keycap" data-i18n="blk_key_enter">Entrée</kbd>
+    </button>
+  </main>
+
+  <script type="module" src="overlay.js"></script>
+</body>
+</html>

@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dhirna — Tableau de bord &amp; Règles</title>
+  <link rel="stylesheet" href="lib/tokens.css" />
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="sidebar-top-row">
+        <div class="sidebar-brand">
+          <svg class="icon-mark" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 4.6V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="8" cy="8" r="1.3" fill="currentColor"/>
+          </svg>
+          <span class="brand-wordmark">Dhirna</span>
+        </div>
+        <div class="sidebar-actions-mini">
+          <button id="opt-btn-theme" class="theme-btn" data-theme-toggle type="button" title="Thème"></button>
+          <button id="opt-btn-lang" class="lang-btn" type="button" title="FR / EN">FR</button>
+        </div>
+      </div>
+
+      <button id="opt-btn-cmdk" class="cmdk-trigger" type="button">
+        <span class="cmdk-trigger-left">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="7.2" cy="7.2" r="4.7" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M10.8 10.8L13.8 13.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span data-i18n="cmdk_trigger">Actions rapides</span>
+        </span>
+        <kbd class="kbd-chip">Ctrl K</kbd>
+      </button>
+
+      <div class="sidebar-status">
+        <div class="sidebar-group-label" data-i18n="opt_engine_state">État du moteur</div>
+        <div class="status-pill" id="opt-status-pill">...</div>
+      </div>
+
+      <div class="sidebar-goal">
+        <div class="sidebar-group-label" data-i18n="goal_card_label">Objectif actif</div>
+        <div class="goal-card">
+          <div class="goal-card-title" id="ext-goal-title" data-i18n="goal_none_title">Choisir un objectif pour démarrer</div>
+          <div class="goal-card-target" id="ext-goal-target" data-i18n="goal_none_hint">Indiquez la tâche ou la fenêtre sur laquelle vous travaillez</div>
+          <button type="button" id="btn-open-goal-modal" class="btn-goal-edit" data-i18n="goal_btn_edit">Modifier l'objectif</button>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Vues principales">
+        <div class="sidebar-group-label" data-i18n="opt_nav_config">Navigation</div>
+        <button type="button" class="nav-row active" id="nav-tab-dashboard" data-view="dashboard">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M2.5 13.5V8.5M6.2 13.5V4.5M9.8 13.5V7M13.5 13.5V2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span data-i18n="dash_nav_label">Historique</span>
+          <kbd class="kbd-chip">1</kbd>
+        </button>
+        <button type="button" class="nav-row" id="nav-tab-planner" data-view="planner">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <rect x="2.5" y="3" width="11" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M2.5 6.5H13.5" stroke="currentColor" stroke-width="1.5"/>
+          </svg>
+          <span data-i18n="dash_nav_planner">Règles</span>
+          <kbd class="kbd-chip">2</kbd>
+        </button>
+        <button type="button" class="nav-row" id="nav-tab-shield" data-view="shield">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M8 2L13 3.8V7.6C13 10.8 10.9 13 8 14C5.1 13 3 10.8 3 7.6V3.8L8 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M5.8 8L7.3 9.5L10.3 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span data-i18n="shield_nav_label">Bouclier</span>
+          <kbd class="kbd-chip">3</kbd>
+        </button>
+      </nav>
+
+      <nav class="sidebar-nav hidden" id="planner-subnav" aria-label="Sections Règles">
+        <div class="sidebar-group-label" data-i18n="dash_nav_planner">Règles</div>
+        <a href="#sec-work" class="nav-row">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+            <circle cx="8" cy="8" r="2" fill="currentColor"/>
+          </svg>
+          <span data-i18n="opt_nav_work">Espace de travail</span>
+        </a>
+        <a href="#sec-block" class="nav-row">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M6.5 11.5L3 8L6.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3.5 8H10.5C12.1569 8 13.5 9.34315 13.5 11V11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span data-i18n="opt_nav_block">Sites à fermer</span>
+        </a>
+        <a href="#sec-schedule" class="nav-row">
+          <svg class="nav-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 5V8L10 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span data-i18n="opt_nav_schedule">Horaires programmés</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-diagram">
+        <div class="sidebar-group-label" data-i18n="opt_cycle_title">Cycle Dhirna</div>
+        <div class="flow-step">
+          <div class="flow-body">
+            <div class="flow-title" data-i18n="opt_step1_title">Détection</div>
+            <div class="flow-caption" data-i18n="opt_step1_desc">S'active dès qu'un site de travail planifié est ouvert</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-body">
+            <div class="flow-title" data-i18n="opt_step2_title">Interception</div>
+            <div class="flow-caption" data-i18n="opt_step2_desc">Coupe tout site distrayant avant chargement</div>
+          </div>
+        </div>
+        <div class="flow-step">
+          <div class="flow-body">
+            <div class="flow-title" data-i18n="opt_step3_title">Retour 3 s</div>
+            <div class="flow-caption" data-i18n="opt_step3_desc">Ferme l'onglet et remet le focus sur votre travail</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div id="lock-warning" class="lock-warning hidden" data-i18n="opt_lock_warning">
+        Session verrouillée en cours — les règles et horaires redeviendront modifiables à la fin du minuteur
+      </div>
+
+      <!-- VIEW 1: ANALYTICS DASHBOARD -->
+      <div id="view-dashboard">
+        <header class="page-header">
+          <div>
+            <h1 data-i18n="dash_title">Historique de concentration</h1>
+            <p class="subtitle" data-i18n="dash_subtitle">
+              Temps de travail mesuré localement et distractions interceptées
+            </p>
+            <div id="ext-sync-badge" class="preview-note"></div>
+          </div>
+
+          <div class="dash-toolbar">
+            <div class="segmented" role="group" aria-label="Période">
+              <button type="button" class="seg-btn" data-days="1" data-i18n="dash_range_1">Aujourd'hui</button>
+              <button type="button" class="seg-btn active" data-days="7" data-i18n="dash_range_7">7 jours</button>
+              <button type="button" class="seg-btn" data-days="30" data-i18n="dash_range_30">30 jours</button>
+            </div>
+            <button type="button" id="btn-dash-refresh" class="btn-secondary-sm" data-i18n="dash_btn_refresh">Actualiser</button>
+            <button type="button" id="btn-dash-csv" class="btn-secondary-sm" data-i18n="dash_btn_csv">Export CSV</button>
+            <button type="button" id="btn-dash-json" class="btn-secondary-sm" data-i18n="dash_btn_json">Export JSON</button>
+            <button type="button" id="btn-dash-reset" class="btn-ghost-danger" data-i18n="dash_btn_reset">Réinitialiser</button>
+          </div>
+        </header>
+
+        <div id="dash-toast" class="save-toast inline-toast hidden"></div>
+
+        <section class="chrono-hud state-idle" id="studio-chrono-hud" aria-label="Chronomètre Focus">
+          <div class="chrono-dial-col">
+            <div class="chrono-dial-wrap" data-chrono-dial>
+              <div class="chrono-center">
+                <span class="chrono-readout" data-chrono-readout>25:00</span>
+                <span class="chrono-sublabel" data-chrono-sublabel>Prêt</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="chrono-body">
+            <div class="chrono-top-row">
+              <div class="chrono-goal-block">
+                <div class="chrono-eyebrow">
+                  <span class="chrono-dot"></span>
+                  <span data-chrono-eyebrow data-i18n="hud_eyebrow_idle">Prêt à démarrer</span>
+                </div>
+                <div class="chrono-goal-heading" data-chrono-goal-title data-i18n="goal_none_title">Choisir un objectif pour démarrer</div>
+                <div class="chrono-goal-sub" data-chrono-goal-sub data-i18n="goal_none_hint">Indiquez la tâche ou la fenêtre sur laquelle vous travaillez</div>
+              </div>
+
+              <div class="chrono-controls">
+                <div class="chrono-pill-group" role="group" aria-label="Durée de session">
+                  <button type="button" class="chrono-pill-btn" data-hud-minutes="25">25m</button>
+                  <button type="button" class="chrono-pill-btn" data-hud-minutes="50">50m</button>
+                  <button type="button" class="chrono-pill-btn" data-hud-minutes="90">90m</button>
+                </div>
+                <button type="button" id="btn-hud-sim-boom" class="chrono-action-btn">
+                  <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M6.5 11.5L3 8L6.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M3.5 8H10.5C12.1569 8 13.5 9.34315 13.5 11V11.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                  </svg>
+                  <span data-i18n="hud_btn_test_boom">Tester le retour (3 s)</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="boom-sim-strip" data-boom-strip>
+              <div class="boom-node">
+                <span class="dot dot-block"></span>
+                <span class="boom-node-tag" data-i18n="hud_boom_intercept">Distraction</span>
+                <span class="boom-node-label" data-boom-block>instagram.com</span>
+              </div>
+              <div class="boom-arc-wrap">
+                <svg class="boom-arc-svg" viewBox="0 0 78 20" fill="none" aria-hidden="true">
+                  <path class="boom-arc-path" d="M8 14C24 3 54 3 70 14"/>
+                  <path d="M65 9.5L71 14.5L64.5 16.5" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="boom-sim-status" data-boom-status data-i18n="hud_sim_ready">Retour en 3 s</span>
+              </div>
+              <div class="boom-node">
+                <span class="dot dot-work"></span>
+                <span class="boom-node-tag" data-i18n="hud_boom_target">Travail</span>
+                <span class="boom-node-label" data-boom-target>docs.google.com</span>
+              </div>
+            </div>
+
+            <div class="presence-hud-row">
+              <div class="presence-hud-left">
+                <input type="checkbox" id="chk-presence-enabled" class="braun-switch" checked />
+                <div class="presence-hud-meta">
+                  <span class="presence-hud-title" data-i18n="presence_label">Garde anti-absence</span>
+                  <span class="presence-hud-sub" data-i18n="presence_sub">Met en pause le compteur après inactivité et déclenche l'alarme</span>
+                </div>
+              </div>
+              <div class="presence-hud-right">
+                <div class="chrono-pill-group" role="group" aria-label="Délai inactivité">
+                  <button type="button" class="presence-pill-btn" data-presence-min="1">1m</button>
+                  <button type="button" class="presence-pill-btn active" data-presence-min="2">2m</button>
+                  <button type="button" class="presence-pill-btn" data-presence-min="5">5m</button>
+                </div>
+                <button type="button" id="btn-test-presence" class="btn-secondary-sm" data-i18n="presence_btn_test">Tester le rappel</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="kpi-grid" aria-label="Indicateurs clés">
+          <article class="kpi-card">
+            <div class="kpi-label" data-i18n="dash_kpi_focus">Temps de concentration</div>
+            <div class="kpi-value" id="kpi-focus-val">0 min</div>
+            <div class="kpi-delta" id="kpi-focus-delta">—</div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-label" data-i18n="dash_kpi_blocked">Accès bloqués</div>
+            <div class="kpi-value" id="kpi-blocked-val">0</div>
+            <div class="kpi-delta" id="kpi-blocked-delta">—</div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-label" data-i18n="dash_kpi_rate">Taux de focus</div>
+            <div class="kpi-value" id="kpi-rate-val">—</div>
+            <div class="kpi-delta" id="kpi-rate-delta">—</div>
+          </article>
+          <article class="kpi-card">
+            <div class="kpi-label" data-i18n="dash_kpi_sessions">Sessions terminées</div>
+            <div class="kpi-value" id="kpi-sessions-val">0</div>
+            <div class="kpi-delta" id="kpi-sessions-delta">—</div>
+          </article>
+        </section>
+
+        <section class="dash-grid-primary">
+          <div class="card dash-card">
+            <div class="dash-card-head">
+              <h2 data-i18n="dash_chart_title">Temps de concentration par jour</h2>
+              <div class="chart-legend">
+                <span class="legend-item"><span class="dot dot-work"></span><span data-i18n="dash_chart_legend_focus">Concentration</span></span>
+                <span class="legend-item"><span class="dot dot-muted"></span><span data-i18n="dash_chart_legend_dist">Distraction</span></span>
+              </div>
+            </div>
+            <div id="chart-daily-focus" class="chart-host"></div>
+          </div>
+
+          <div class="card dash-card">
+            <div class="dash-card-head">
+              <h2 data-i18n="dash_top_blocked_title">Top sites et applis bloqués</h2>
+            </div>
+            <div id="list-top-blocked" class="ranked-list"></div>
+          </div>
+        </section>
+
+        <section class="dash-grid-secondary">
+          <div class="card dash-card">
+            <div class="dash-card-head">
+              <h2 data-i18n="dash_time_tools_title">Temps passé par outil</h2>
+            </div>
+            <div id="list-time-tools" class="ranked-list"></div>
+          </div>
+
+          <div class="card dash-card">
+            <div class="dash-card-head">
+              <h2 data-i18n="dash_hourly_title">Heures de dérapage (0h–23h)</h2>
+              <span class="mono-meta" id="hourly-peak-label"></span>
+            </div>
+            <div id="chart-hourly-strip" class="hourly-host"></div>
+          </div>
+        </section>
+
+        <section class="card dash-card">
+          <div class="dash-card-head">
+            <h2 data-i18n="dash_recent_title">10 derniers accès bloqués</h2>
+          </div>
+          <div class="table-wrap">
+            <table class="access-table">
+              <thead>
+                <tr>
+                  <th data-i18n="dash_recent_col_time">Heure</th>
+                  <th data-i18n="dash_recent_col_target">Site ou application</th>
+                  <th data-i18n="dash_recent_col_kind">Type</th>
+                </tr>
+              </thead>
+              <tbody id="recent-events-body"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW 2: RULES -->
+      <div id="view-planner" class="hidden">
+        <header class="page-header">
+          <div>
+            <h1 data-i18n="opt_page_title">Règles de concentration</h1>
+            <p class="subtitle" data-i18n="opt_page_subtitle">
+              Définissez vos outils de travail et les distractions que Dhirna ferme automatiquement.
+            </p>
+          </div>
+          <div id="save-toast" class="save-toast hidden" data-i18n="opt_saved_toast">Modifications enregistrées</div>
+        </header>
+
+        <section class="architecture-card" aria-label="Schéma actif">
+          <div class="arch-node">
+            <div class="arch-head">
+              <span class="dot dot-work"></span>
+              <span data-i18n="opt_arch_node1">1. Fenêtre de travail ouverte</span>
+            </div>
+            <div class="arch-code" id="arch-work-preview">—</div>
+            <div class="arch-note" data-i18n="opt_arch_note1">Active la protection et sert de cible de retour</div>
+          </div>
+
+          <div class="arch-connector">
+            <svg class="arch-svg" viewBox="0 0 120 32" fill="none" aria-hidden="true">
+              <path d="M110 22C82 6 38 6 10 22" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="3 3"/>
+              <path d="M15 16L9 22.5L16.5 25" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="arch-badge">Dhirna 3 s</span>
+          </div>
+
+          <div class="arch-node">
+            <div class="arch-head">
+              <span class="dot dot-block"></span>
+              <span data-i18n="opt_arch_node2">2. Distraction interceptée</span>
+            </div>
+            <div class="arch-code">instagram.com, tiktok.com</div>
+            <div class="arch-note" data-i18n="opt_arch_note2">Fermée après 3 s, retour direct à gauche</div>
+          </div>
+        </section>
+
+        <section class="card" id="sec-work">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="opt_sec1_title">Outils de travail</h2>
+              <p class="card-desc" data-i18n="opt_sec1_desc">
+                Applications et sites sur lesquels vous travaillez. Après chaque interception, Dhirna vous ramène sur la dernière fenêtre de travail ouverte.
+              </p>
+            </div>
+            <label class="switch-row">
+              <input type="checkbox" id="opt-auto-trigger" />
+              <span data-i18n="opt_auto_label">Activer automatiquement quand un outil de travail est ouvert</span>
+            </label>
+          </div>
+
+          <div class="suggestions-bar">
+            <span class="sug-label" data-i18n="opt_quick_adds">Ajouts rapides</span>
+            <div id="work-suggestions" class="sug-chips"></div>
+          </div>
+
+          <div id="opt-work-tags" class="tags-area"></div>
+
+          <form id="opt-form-work" class="add-row">
+            <input type="text" id="opt-input-work" data-i18n-placeholder="opt_work_ph" placeholder="Domaine de travail (ex. docs.google.com, figma.com)" />
+            <button type="submit" class="btn-add" data-i18n="opt_btn_add_work">Ajouter aux outils</button>
+          </form>
+        </section>
+
+        <section class="card" id="sec-block">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="opt_sec2_title">Distractions à fermer</h2>
+              <p class="card-desc" data-i18n="opt_sec2_desc">
+                En liste noire, seuls les domaines ci-dessous sont fermés. En liste blanche, tout domaine absent de vos outils de travail et de la liste autorisée est fermé.
+              </p>
+            </div>
+            <div class="mode-selector">
+              <label>
+                <input type="radio" name="mode" value="blacklist" id="mode-blacklist" />
+                <span data-i18n="opt_radio_blacklist">Liste noire</span>
+              </label>
+              <label>
+                <input type="radio" name="mode" value="whitelist" id="mode-whitelist" />
+                <span data-i18n="opt_radio_whitelist">Liste blanche stricte</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="panel-blacklist">
+            <div class="suggestions-bar">
+              <span class="sug-label" data-i18n="opt_common_distractions">Distractions courantes</span>
+              <div id="block-suggestions" class="sug-chips"></div>
+            </div>
+            <div id="opt-blacklist-tags" class="tags-area"></div>
+            <form id="opt-form-blacklist" class="add-row">
+              <input type="text" id="opt-input-blacklist" data-i18n-placeholder="opt_blacklist_ph" placeholder="Domaine à fermer (ex. instagram.com, tiktok.com)" />
+              <button type="submit" class="btn-add" data-i18n="opt_btn_add_blacklist">Ajouter aux distractions</button>
+            </form>
+          </div>
+
+          <div id="panel-whitelist" class="hidden">
+            <p class="hint-note" data-i18n="opt_whitelist_hint">
+              Vos outils de travail restent toujours autorisés. Ajoutez ici les domaines de connexion ou de référence nécessaires.
+            </p>
+            <div id="opt-whitelist-tags" class="tags-area"></div>
+            <form id="opt-form-whitelist" class="add-row">
+              <input type="text" id="opt-input-whitelist" data-i18n-placeholder="opt_whitelist_ph" placeholder="Domaine autorisé (ex. accounts.google.com)" />
+              <button type="submit" class="btn-add" data-i18n="opt_btn_add_whitelist">Autoriser ce domaine</button>
+            </form>
+          </div>
+        </section>
+
+        <section class="card" id="sec-schedule">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="opt_sec3_title">Horaires automatiques</h2>
+              <p class="card-desc" data-i18n="opt_sec3_desc">
+                Active la protection sur une plage horaire récurrente, même sans fenêtre de travail ouverte.
+              </p>
+            </div>
+            <label class="switch-row">
+              <input type="checkbox" id="sched-enabled" />
+              <span data-i18n="opt_sched_enable">Activer la plage horaire</span>
+            </label>
+          </div>
+
+          <div class="schedule-grid">
+            <div class="days-picker" id="sched-days">
+              <button type="button" class="day-btn" data-day="1">Lun</button>
+              <button type="button" class="day-btn" data-day="2">Mar</button>
+              <button type="button" class="day-btn" data-day="3">Mer</button>
+              <button type="button" class="day-btn" data-day="4">Jeu</button>
+              <button type="button" class="day-btn" data-day="5">Ven</button>
+              <button type="button" class="day-btn" data-day="6">Sam</button>
+              <button type="button" class="day-btn" data-day="0">Dim</button>
+            </div>
+            <div class="time-inputs">
+              <label>
+                <span data-i18n="opt_sched_start">Début</span>
+                <input type="time" id="sched-start" value="09:00" />
+              </label>
+              <label>
+                <span data-i18n="opt_sched_end">Fin</span>
+                <input type="time" id="sched-end" value="17:00" />
+              </label>
+              <button type="button" id="btn-save-schedule" class="btn-add" data-i18n="opt_btn_save_sched">Enregistrer l'horaire</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- VIEW 3: SHIELD (PC PROTECTION + MOBILE QR CODE) -->
+      <div id="view-shield" class="hidden">
+        <header class="page-header">
+          <div>
+            <h1 data-i18n="shield_title">Bouclier de protection</h1>
+            <p class="subtitle" data-i18n="shield_subtitle">
+              Filtrage anti-pornographie permanent sur cet ordinateur et QR Code mobile iOS / Android.
+            </p>
+          </div>
+          <div class="shield-header-right">
+            <span id="shield-status-pill" class="shield-pill shield-pill-off" data-i18n="shield_status_off">Bouclier inactif</span>
+            <div id="shield-toast" class="save-toast hidden"></div>
+          </div>
+        </header>
+
+        <!-- Card 1: PC Protection -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="shield_card_pc_title">Protection PC</h2>
+              <p class="card-desc" data-i18n="shield_card_pc_desc">
+                Bloque les sites adultes au niveau système (DNS + hosts) et force SafeSearch dans vos navigateurs.
+              </p>
+            </div>
+            <label class="switch-row switch-primary">
+              <input type="checkbox" id="shield-toggle-enabled" />
+              <span data-i18n="shield_toggle_enable">Activer la protection PC 24h/24</span>
+            </label>
+          </div>
+
+          <div class="sub-block">
+            <div class="sub-title" data-i18n="shield_provider_label">Fournisseur DNS famille (gratuit, sans compte)</div>
+            <div class="shield-providers" id="shield-providers-grid"></div>
+          </div>
+
+          <div class="sub-block shield-options">
+            <label class="switch-row">
+              <input type="checkbox" id="shield-chk-safesearch" checked />
+              <span data-i18n="shield_safesearch_label">Forcer SafeSearch sur Google, Bing, DuckDuckGo, Qwant et Ecosia</span>
+            </label>
+            <label class="switch-row">
+              <input type="checkbox" id="shield-chk-noreels" checked />
+              <span data-i18n="shield_noreels_label">Couper Reels, Shorts et TikTok pendant les sessions Focus (Messages conservés)</span>
+            </label>
+            <label class="switch-row">
+              <input type="checkbox" id="shield-chk-youtube" />
+              <span data-i18n="shield_youtube_label">Activer le mode restreint YouTube</span>
+            </label>
+          </div>
+
+          <div class="strict-box">
+            <div>
+              <div class="sub-title" data-i18n="shield_lock_title">Verrouillage anti-impulsion</div>
+              <p class="card-desc" id="shield-lock-desc" data-i18n="shield_lock_desc">
+                Empêche la désactivation du bouclier PC pendant la durée choisie.
+              </p>
+            </div>
+            <div class="shield-lock-row">
+              <button type="button" class="btn-secondary-sm btn-shield-lock" data-hours="24">24 h</button>
+              <button type="button" class="btn-secondary-sm btn-shield-lock" data-hours="168">7 j</button>
+              <button type="button" class="btn-secondary-sm btn-shield-lock" data-hours="720">30 j</button>
+            </div>
+          </div>
+
+          <div class="sub-block">
+            <div class="card-header" style="margin-bottom:8px;">
+              <div class="sub-title" data-i18n="shield_diag_title">Diagnostic réseau PC</div>
+              <button type="button" id="btn-shield-test" class="btn-secondary-sm" data-i18n="shield_btn_test">Vérifier le DNS</button>
+            </div>
+            <div class="diag-grid">
+              <div class="diag-row">
+                <span class="diag-label" data-i18n="shield_diag_dns_label">DNS famille système</span>
+                <span class="diag-val" id="diag-dns-val">—</span>
+              </div>
+              <div class="diag-row">
+                <span class="diag-label" data-i18n="shield_diag_incognito_label">Navigation privée</span>
+                <div class="diag-action-wrap">
+                  <span class="diag-val" id="diag-incognito-val">—</span>
+                  <button type="button" id="btn-diag-incognito" class="btn-secondary-sm hidden" data-i18n="shield_diag_incognito_btn">Ouvrir les réglages</button>
+                </div>
+              </div>
+              <div class="diag-row">
+                <span class="diag-label" data-i18n="shield_diag_doh_label">DNS sécurisé du navigateur</span>
+                <div class="diag-action-wrap">
+                  <span class="diag-val diag-note" data-i18n="shield_diag_doh_note">Alignez le DNS sécurisé du navigateur sur le même fournisseur.</span>
+                  <button type="button" id="btn-diag-doh" class="btn-secondary-sm" data-i18n="shield_diag_doh_btn">Sécurité navigateur</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card 2: Simplified Mobile Shield (QR Code Anti-Porn iOS & Android ONLY) -->
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <h2 data-i18n="shield_mobile_title">Bouclier Mobile (QR Code iOS &amp; Android)</h2>
+              <p class="card-desc" data-i18n="shield_mobile_desc">
+                Scannez le QR Code pour éliminer la pornographie sur votre téléphone via DNS chiffré natif, sans aucune application.
+              </p>
+            </div>
+            <div class="segmented" role="tablist" aria-label="Plateforme mobile">
+              <button type="button" class="seg-btn active" id="ext-mob-tab-ios" data-mobile-os="ios" data-i18n="shield_mobile_tab_ios">iPhone (iOS)</button>
+              <button type="button" class="seg-btn" id="ext-mob-tab-android" data-mobile-os="android" data-i18n="shield_mobile_tab_android">Android</button>
+            </div>
+          </div>
+
+          <div class="qr-row" style="align-items:flex-start;gap:24px;">
+            <div id="ext-mobile-qr" class="qr-box"></div>
+            <div class="phone-body" style="flex:1;">
+              <div id="ext-mobile-ios-panel">
+                <ol class="shield-steps">
+                  <li data-i18n="shield_ios_s1">Connectez l'iPhone au même réseau local que ce PC, ouvrez l'Appareil photo et scannez le QR Code.</li>
+                  <li data-i18n="shield_ios_s2">Touchez Autoriser pour télécharger le profil DNS chiffré Dhirna.</li>
+                  <li data-i18n="shield_ios_s3">Ouvrez Réglages → Profil téléchargé → Installer.</li>
+                </ol>
+                <div style="margin-top:12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                  <button type="button" id="btn-shield-download-ios" class="btn-secondary-sm" data-i18n="shield_btn_export_ios">Exporter .mobileconfig</button>
+                  <span class="card-desc" data-i18n="shield_ios_offline_hint">Hors réseau local ? Exportez le fichier .mobileconfig pour l'envoyer sur l'iPhone.</span>
+                </div>
+              </div>
+
+              <div id="ext-mobile-android-panel" class="hidden">
+                <div class="copy-row" style="margin-bottom:10px;">
+                  <code id="shield-android-host" class="host-code">adult-filter-dns.cleanbrowsing.org</code>
+                  <button type="button" id="btn-shield-copy-dot" class="btn-secondary-sm" data-i18n="shield_btn_copy">Copier</button>
+                </div>
+                <ol class="shield-steps">
+                  <li data-i18n="shield_android_s1">Ouvrez Paramètres → Réseau et Internet → DNS privé.</li>
+                  <li data-i18n="shield_android_s2">Sélectionnez Nom d'hôte du fournisseur DNS privé.</li>
+                  <li data-i18n="shield_android_s3">Scannez le QR Code ou copiez l'adresse ci-dessous, collez-la et enregistrez.</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <div id="shield-disable-modal" class="sim-modal hidden" role="dialog" aria-modal="true" aria-labelledby="shield-disable-title">
+    <div class="sim-modal-card">
+      <h3 id="shield-disable-title" data-i18n="shield_disable_title">Désactiver le bouclier PC</h3>
+      <p class="card-desc" data-i18n="shield_disable_desc">
+        Pause obligatoire de 60 secondes. Saisissez la phrase exacte à la fin du décompte pour confirmer.
+      </p>
+      <div class="mono-timer" id="shield-disable-timer">60 s</div>
+      <div class="goal-field">
+        <label for="shield-disable-input" id="shield-disable-phrase-lbl"></label>
+        <input type="text" id="shield-disable-input" autocomplete="off" />
+      </div>
+      <div class="modal-actions">
+        <button id="btn-shield-keep" class="btn-add" type="button" data-i18n="shield_disable_keep">Garder le bouclier actif</button>
+        <button id="btn-shield-confirm-off" class="btn-danger" type="button" disabled data-i18n="shield_disable_confirm">Confirmer la désactivation</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="goal-modal" class="sim-modal hidden" role="dialog" aria-modal="true" aria-labelledby="goal-modal-title">
+    <div class="sim-modal-card goal-modal-card">
+      <div class="goal-modal-head">
+        <div class="goal-eyebrow" id="goal-modal-eyebrow" data-i18n="goal_onb_eyebrow">Objectif de travail</div>
+        <h3 id="goal-modal-title" data-i18n="goal_onb_title">Sur quoi travaillez-vous maintenant ?</h3>
+        <p class="card-desc" data-i18n="goal_onb_subtitle">
+          Définissez votre tâche active : en cas de distraction, Dhirna vous ramène directement dessus.
+        </p>
+      </div>
+
+      <form id="goal-modal-form" class="goal-form">
+        <div class="goal-field">
+          <label for="goal-input-title" data-i18n="goal_field_title">Votre objectif</label>
+          <input type="text" id="goal-input-title" maxlength="120" data-i18n-placeholder="goal_field_title_ph" placeholder="Rédiger le rapport, coder le module API..." />
+        </div>
+
+        <div class="goal-field">
+          <label data-i18n="goal_field_target_mode">Espace de travail</label>
+          <div class="segmented" role="group">
+            <button type="button" class="seg-btn goal-mode-btn active" data-goal-mode="site" data-i18n="goal_mode_site">Site navigateur</button>
+            <button type="button" class="seg-btn goal-mode-btn" data-goal-mode="app" data-i18n="goal_mode_app">Application</button>
+            <button type="button" class="seg-btn goal-mode-btn" data-goal-mode="both" data-i18n="goal_mode_both">Site et application</button>
+          </div>
+        </div>
+
+        <div class="goal-field" id="goal-field-tab-wrap">
+          <label for="goal-select-tab" data-i18n="goal_pick_open_tab">Choisir un onglet ouvert</label>
+          <select id="goal-select-tab" class="window-select"></select>
+        </div>
+
+        <div class="goal-field" id="goal-field-site-wrap">
+          <label for="goal-input-site" data-i18n="goal_field_site">Domaine de travail</label>
+          <input type="text" id="goal-input-site" data-i18n-placeholder="goal_field_site_ph" placeholder="overleaf.com, github.com, notion.so" />
+        </div>
+
+        <div class="goal-field hidden" id="goal-field-app-wrap">
+          <label for="goal-input-app" data-i18n="goal_field_app">Nom de l'application</label>
+          <input type="text" id="goal-input-app" data-i18n-placeholder="goal_field_app_ph" placeholder="code, soffice.bin, obsidian" />
+        </div>
+
+        <div class="goal-field" id="goal-distractions-wrap">
+          <label data-i18n="goal_field_distractions">Distractions à bloquer</label>
+          <div id="goal-distraction-chips" class="goal-chips"></div>
+        </div>
+
+        <div id="goal-form-error" class="goal-error hidden" data-i18n="goal_validation_err">
+          Indiquez un titre ou une fenêtre de travail avant d'enregistrer
+        </div>
+
+        <div class="modal-actions">
+          <button id="btn-goal-cancel" class="btn-secondary" type="button" data-i18n="goal_btn_cancel">Annuler</button>
+          <button id="btn-goal-submit" class="btn-add" type="submit" data-i18n="goal_btn_confirm">Enregistrer l'objectif</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="reset-modal" class="sim-modal hidden" role="dialog" aria-modal="true" aria-labelledby="reset-modal-title">
+    <div class="sim-modal-card">
+      <h3 id="reset-modal-title" data-i18n="dash_reset_title">Effacer toutes les statistiques locales</h3>
+      <p class="card-desc" data-i18n="dash_reset_desc">
+        Cette action supprime définitivement votre historique de concentration, les segments et les accès bloqués dans la base locale.
+      </p>
+      <div class="modal-actions">
+        <button id="btn-reset-cancel" class="btn-secondary" type="button" data-i18n="dash_reset_cancel">Annuler</button>
+        <button id="btn-reset-confirm" class="btn-danger" type="button" data-i18n="dash_reset_confirm">Confirmer la suppression</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="cmdk-modal" class="cmdk-backdrop hidden" role="dialog" aria-modal="true" aria-label="Actions rapides">
+    <div class="cmdk-panel">
+      <div class="cmdk-input-wrap">
+        <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <circle cx="7.2" cy="7.2" r="4.7" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M10.8 10.8L13.8 13.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input
+          type="text"
+          class="cmdk-input"
+          data-cmdk-input
+          autocomplete="off"
+          data-i18n-placeholder="cmdk_placeholder"
+          placeholder="Rechercher une vue ou une action…"
+        />
+        <kbd class="kbd-chip">ESC</kbd>
+      </div>
+      <div class="cmdk-list" data-cmdk-list></div>
+      <div class="cmdk-footer">
+        <span data-i18n="cmdk_footer_hint">Flèches naviguer · Entrée exécuter · Échap fermer</span>
+        <span class="mono-meta">Dhirna</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="presence-modal" class="sim-modal hidden" role="dialog" aria-modal="true" aria-labelledby="presence-title">
+    <div id="presence-modal-card" class="sim-modal-card presence-modal-card">
+      <div class="presence-status-pill">
+        <span class="dot dot-work"></span>
+        <span id="presence-status-pill">Alarme sonore dans 30 s</span>
+      </div>
+      <h3 id="presence-title" data-i18n="presence_title">Toujours devant votre travail ?</h3>
+      <p class="card-desc" id="presence-desc">
+        Aucune activité détectée depuis 2 min. Les minutes d'absence ne sont pas comptées.
+      </p>
+      <div class="sim-track">
+        <div id="presence-bar" class="sim-bar"></div>
+      </div>
+      <button id="btn-presence-resume" class="btn-add full-width" type="button" data-i18n="presence_btn_resume">
+        Reprendre le travail
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>

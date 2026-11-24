@@ -1,0 +1,18 @@
+{
+  "appName": {
+    "message": "Dhirna — Concentration & Bouclier Web",
+    "description": "Nom complet de l'extension"
+  },
+  "appShortName": {
+    "message": "Dhirna",
+    "description": "Nom court de l'extension"
+  },
+  "appDescription": {
+    "message": "Planifiez vos outils de travail, fermez les distractions en 3 secondes et filtrez le contenu adulte localement.",
+    "description": "Description de l'extension"
+  },
+  "actionTitle": {
+    "message": "Dhirna — Session & Bouclier",
+    "description": "Infobulle du bouton de barre d'outils"
+  }
+}

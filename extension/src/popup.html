@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dhirna</title>
+  <link rel="stylesheet" href="lib/tokens.css" />
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="brand">
+      <svg class="icon-mark" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M8 4.6V8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="8" cy="8" r="1.3" fill="currentColor"/>
+      </svg>
+      <span class="brand-name">Dhirna</span>
+    </div>
+
+    <div class="header-right">
+      <div class="status-indicator" id="status-banner">
+        <span class="status-dot" id="status-dot"></span>
+        <span class="status-label" id="status-label">...</span>
+      </div>
+      <button id="btn-toggle-theme" class="theme-btn" data-theme-toggle type="button" title="Thème"></button>
+      <button id="btn-toggle-lang" class="lang-btn" type="button" title="FR / EN">FR</button>
+      <button id="btn-open-options" class="icon-btn" type="button" title="Règles" aria-label="Règles">
+        <svg class="icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M2.5 4.5H13.5M2.5 8H13.5M2.5 11.5H13.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          <circle cx="5.5" cy="4.5" r="1.5" fill="var(--surface-card)" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="10.5" cy="8" r="1.5" fill="var(--surface-card)" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="6.5" cy="11.5" r="1.5" fill="var(--surface-card)" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div id="popup-main-content">
+    <section class="delay-box hidden" id="delay-box">
+      <div class="delay-row">
+        <span class="delay-text" data-i18n="popup_delay_text">Pause anti-impulsion avant désactivation</span>
+        <span class="delay-timer"><span id="delay-sec">30</span>s</span>
+      </div>
+      <button id="btn-cancel-delay" class="btn-primary-compact" type="button" data-i18n="popup_delay_cancel">
+        Maintenir la protection active
+      </button>
+    </section>
+
+    <section class="goal-strip" id="popup-goal-strip">
+      <div class="goal-strip-left">
+        <div class="goal-strip-label" data-i18n="goal_card_label">Objectif actif</div>
+        <div class="goal-strip-title" id="popup-goal-title" data-i18n="goal_none_title">Choisir un objectif pour démarrer</div>
+      </div>
+      <button id="btn-popup-edit-goal" class="btn-inline" type="button" data-i18n="goal_btn_edit">Modifier l'objectif</button>
+    </section>
+
+    <section class="circuit-card" id="current-tab-card">
+      <div class="circuit-diagram">
+        <div class="circuit-node circuit-node-work">
+          <div class="circuit-node-head">
+            <span class="dot dot-work"></span>
+            <span data-i18n="popup_circuit_work">Cible de travail</span>
+          </div>
+          <div class="circuit-node-val" id="circuit-work-preview">—</div>
+        </div>
+
+        <div class="circuit-arc">
+          <svg class="arc-svg" viewBox="0 0 64 24" fill="none" aria-hidden="true">
+            <path d="M58 17C44 5 20 5 6 17" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="2.5 2.5"/>
+            <path d="M10 12L5.5 17.5L11.5 19" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="arc-tag">3s</span>
+        </div>
+
+        <div class="circuit-node circuit-node-block">
+          <div class="circuit-node-head">
+            <span class="dot dot-block"></span>
+            <span data-i18n="popup_circuit_block">Interception</span>
+          </div>
+          <div class="circuit-node-val" id="circuit-block-preview">—</div>
+        </div>
+      </div>
+
+      <div class="current-tab-bar">
+        <span class="current-tab-domain" id="current-tab-domain">—</span>
+        <div class="current-tab-actions">
+          <button id="btn-add-current-work" class="btn-inline btn-inline-accent" type="button" data-i18n="goal_btn_use_tab">
+            Utiliser cet onglet
+          </button>
+          <button id="btn-add-current-block" class="btn-inline" type="button" data-i18n="popup_add_tab_block">
+            + Fermer
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="planner-section">
+      <div class="section-header">
+        <div class="section-title-group">
+          <span class="dot dot-work"></span>
+          <span class="section-title" data-i18n="popup_sec1_title">Sites de travail</span>
+        </div>
+        <label class="toggle-control">
+          <input type="checkbox" id="chk-auto-trigger" />
+          <span data-i18n="popup_auto_toggle">Auto-activation</span>
+        </label>
+      </div>
+      <div class="tag-list" id="work-sites-list"></div>
+      <form id="form-add-work" class="inline-form">
+        <input type="text" id="input-add-work" data-i18n-placeholder="popup_add_work_ph" placeholder="Ajouter un domaine (ex. docs.google.com)" />
+        <button type="submit" data-i18n="popup_btn_add">Ajouter</button>
+      </form>
+    </section>
+
+    <section class="planner-section">
+      <div class="section-header">
+        <div class="section-title-group">
+          <span class="dot dot-block"></span>
+          <span class="section-title" id="block-section-title" data-i18n="popup_sec2_blacklist">Sites à fermer</span>
+        </div>
+        <span class="meta-label" id="mode-pill" data-i18n="popup_mode_blacklist">Liste noire</span>
+      </div>
+      <div class="tag-list" id="block-sites-list"></div>
+      <form id="form-add-block" class="inline-form">
+        <input type="text" id="input-add-block" data-i18n-placeholder="popup_add_block_ph" placeholder="Ajouter un domaine (ex. instagram.com)" />
+        <button type="submit" data-i18n="popup_btn_add">Ajouter</button>
+      </form>
+    </section>
+
+    <section class="planner-section">
+      <div class="section-header">
+        <span class="section-title" data-i18n="popup_sec3_title">Session verrouillée</span>
+        <label class="toggle-control">
+          <input type="checkbox" id="chk-manual-on" />
+          <span data-i18n="popup_manual_toggle">Manuel</span>
+        </label>
+      </div>
+      <input type="text" id="input-session-goal" class="session-goal-input" maxlength="120" data-i18n-placeholder="goal_field_title_ph" placeholder="Objectif de session..." />
+      <div class="session-buttons">
+        <button class="btn-session" type="button" data-minutes="25">25 min</button>
+        <button class="btn-session" type="button" data-minutes="50">50 min</button>
+        <button class="btn-session" type="button" data-minutes="90">90 min</button>
+      </div>
+    </section>
+
+    <footer class="footer-stats">
+      <div class="stats-row">
+        <div class="stats-left">
+          <span class="stats-label" data-i18n="popup_stats_label">Interceptions aujourd'hui</span>
+          <span class="stats-num" id="popup-stats-total">0</span>
+        </div>
+        <div class="footer-actions">
+          <button id="btn-open-shield" class="btn-shield-link" type="button" data-i18n="shield_nav_label">
+            Bouclier
+          </button>
+          <button id="btn-open-dashboard" class="btn-dashboard-link" type="button" data-i18n="popup_open_dashboard">
+            Tableau de bord
+          </button>
+        </div>
+      </div>
+      <div class="stats-top" id="popup-stats-top"></div>
+    </footer>
+  </div>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

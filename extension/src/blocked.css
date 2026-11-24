@@ -1,0 +1,445 @@
+/* Dhirna Browser Interception Screen — Graphite Studio (tokens via lib/tokens.css) */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.panel {
+  width: 100%;
+  max-width: 632px;
+  background-color: var(--surface-card);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-xl);
+  padding: 28px;
+  box-shadow: var(--shadow-float);
+  position: relative;
+  overflow: hidden;
+}
+
+.panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--accent);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--hairline);
+  margin-bottom: 24px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+
+.icon-mark {
+  width: 18px;
+  height: 18px;
+  color: var(--accent);
+}
+
+.brand-name {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.header-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: var(--surface-inset);
+  border: 1px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.hero-copy {
+  margin-bottom: 24px;
+}
+
+.goal-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  margin-bottom: 12px;
+  background-color: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  border-radius: 999px;
+  font-size: 12.5px;
+}
+
+.goal-prefix {
+  color: var(--text-secondary);
+}
+
+.goal-text {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 34px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: 14px;
+  line-height: 22px;
+  color: var(--text-secondary);
+}
+
+.mono-inline {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-primary);
+  background-color: var(--surface-inset);
+  border: 1px solid var(--hairline);
+  padding: 2px 7px;
+  border-radius: var(--radius-xs);
+}
+
+/* Visual Moment: Real-time Boomerang Trajectory Stage */
+.trajectory-stage {
+  display: grid;
+  grid-template-columns: 1fr 104px 1.25fr;
+  align-items: stretch;
+  gap: 12px;
+  padding: 18px;
+  background-color: var(--surface-inset);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  margin-bottom: 20px;
+}
+
+.node-card {
+  background-color: var(--surface-card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  box-shadow: var(--shadow-btn);
+}
+
+.node-work {
+  background-color: var(--surface-raised);
+  border-color: var(--accent-border);
+  box-shadow: inset 0 1px 0 var(--bevel-top), var(--shadow-btn);
+}
+
+.node-distraction {
+  opacity: 0.78;
+}
+
+.node-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  line-height: 16px;
+}
+
+.node-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dot-green {
+  background-color: var(--accent);
+}
+
+.dot-red {
+  background-color: var(--danger);
+}
+
+.node-kind {
+  color: var(--text-secondary);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.node-state {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-muted);
+}
+
+.node-title {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.node-domain {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trajectory-bridge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.bridge-dial {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+}
+
+.bridge-ring-svg {
+  width: 64px;
+  height: 64px;
+  transform: rotate(-90deg);
+}
+
+.bridge-ring-track {
+  stroke: var(--hairline-strong);
+}
+
+.bridge-ring-arc {
+  stroke: var(--accent);
+  stroke-dasharray: 163.36;
+  stroke-dashoffset: 0;
+}
+
+.bridge-svg {
+  width: 84px;
+  height: 16px;
+}
+
+.countdown-badge {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+}
+
+.timer-bar-wrap {
+  margin-bottom: 20px;
+}
+
+.timer-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.mono-num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.progress-track {
+  width: 100%;
+  height: 4px;
+  background-color: var(--surface-inset);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 100%;
+  background-color: var(--accent);
+  transform-origin: left center;
+  transform: scaleX(1);
+}
+
+.actions {
+  margin-bottom: 20px;
+}
+
+.btn-primary {
+  width: 100%;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-inverse);
+  color: var(--text-on-inverse);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: var(--shadow-btn);
+  cursor: pointer;
+  transition: background-color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+
+.btn-primary:hover {
+  background-color: var(--surface-inverse-hover);
+}
+
+.btn-primary:active {
+  transform: scale(0.985);
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.keycap {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 16px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background-color: rgba(128, 128, 128, 0.22);
+  color: inherit;
+  font-weight: 500;
+}
+
+.stats-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid var(--hairline);
+  gap: 16px;
+}
+
+.stat-cell {
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 20px;
+  background-color: var(--hairline);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+/* Anti-AFK Presence Check & Audible Alarm States */
+body[data-mode="presence"] .panel::before {
+  background-color: var(--amber);
+}
+
+body[data-mode="presence"] .bridge-ring-arc,
+body[data-mode="presence"] .progress-bar {
+  background-color: var(--amber);
+  stroke: var(--amber);
+}
+
+body[data-mode="presence"] .countdown-badge {
+  color: var(--amber);
+}
+
+body[data-mode="presence"][data-alarm="active"] .panel::before {
+  background-color: var(--danger);
+}
+
+body[data-mode="presence"][data-alarm="active"] .panel {
+  border-color: var(--danger-border);
+}
+
+body[data-mode="presence"][data-alarm="active"] .bridge-ring-arc {
+  stroke: var(--danger);
+  stroke-dashoffset: 0 !important;
+}
+
+body[data-mode="presence"][data-alarm="active"] .countdown-badge {
+  color: var(--danger);
+}
+
+body[data-mode="presence"][data-alarm="active"] .btn-primary {
+  background-color: var(--danger);
+  color: #ffffff;
+  border-color: var(--danger-border);
+}
